@@ -40,7 +40,7 @@ Topic:quickstart-avro-status	PartitionCount:1	ReplicationFactor:1	Configs:
 ### 4. Check the kafka-connect worker with avro support is started
 
 ```
-docker logs kafka-connect-avro | grep started
+docker logs kafka-connect-avro | findstr started
 ```
 
 ### 5. Check list connectors in kafka-connect worker
