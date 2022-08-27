@@ -105,16 +105,3 @@ services:
     ports:
       - "3306:3306"
     # command: "bash -c 'mysql -u confluent -pconfluent < /tmp/db_setup.sql'"
-  quickstart-elasticsearch:
-    container_name: "quickstart-elasticsearch"
-    image: "elasticsearch:6.5.4"
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-  quickstart-kibana:
-    container_name: "quickstart-kibana"
-    image: "kibana:6.5.4"
-    environment:
-      ELASTICSEARCH_URL: http://quickstart-elasticsearch:9200
-    ports:
-      - "5601:5601"
