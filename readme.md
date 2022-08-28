@@ -11,8 +11,8 @@ docker-compose up --build
 ### 2. create topics
 
 ```
-docker exec broker kafka-topics --create --topic quickstart-avro-offsets --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 \
-	&& docker exec broker kafka-topics --create --topic quickstart-avro-config --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 \
+docker exec broker kafka-topics --create --topic quickstart-avro-offsets --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 ^
+	&& docker exec broker kafka-topics --create --topic quickstart-avro-config --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 ^
 	&& docker exec broker kafka-topics --create --topic quickstart-avro-status --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181
 ```
 
@@ -46,29 +46,13 @@ docker logs kafka-connect-avro | findstr started
 ### 5. Check list connectors in kafka-connect worker
 
 ```
-curl -s -X GET http://localhost:8083/connectors-plugins
+curl -s -X GET http://localhost:8083/connector-plugins
 ```
 
 ### 6. Create connector JDBC source connector
 
 ```
-curl -X POST \
-  http://localhost:8083/connectors \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "name": "quickstart-jdbc-source",
-  "config": {
-    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
-    "tasks.max": 1,
-    "connection.url": "jdbc:mysql://quickstart-mysql:3306/connect_test",
-    "connection.user": "root",
-    "connection.password": "confluent",
-    "mode": "timestamp",
-    "timestamp.column.name": "modified",
-    "topic.prefix": "quickstart-jdbc-",
-    "poll.interval.ms": 1000
-  }
-}'
+curl -d @"source.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
 ```
 
 output should be
@@ -100,12 +84,33 @@ WHERE `connect_test`.`test`.`modified` > ?
 ORDER BY `connect_test`.`test`.`modified` ASC
 ```
 
-![sourceJDBCMySQL-sinkFile](https://raw.githubusercontent.com/harryosmar/kafka-connect/master/doc/mysql-db.png)
+Create mysql table 'test'
 
-### 7. Check if the connector JDBC source - topic has been created
+mysql -uroot -p
+
+enter password confluent
 
 ```
-docker exec broker kafka-topics --describe --zookeeper zookeeper:2181 | grep quickstart-jdbc-test
+create table test (
+      id int not null auto_increment,
+      name varchar(100),
+      email varchar(100),
+      department varchar(100),
+      modified timestamp not null default current_timestamp,
+      primary key (id)
+     );
+```
+	
+![sourceJDBCMySQL-sinkFile](https://raw.githubusercontent.com/harryosmar/kafka-connect/master/doc/mysql-db.png)
+
+### 7. Create and check if the connector JDBC source - topic has been created
+
+```
+docker exec broker kafka-topics --create --topic quickstart-jdbc-test --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181
+```
+
+```
+docker exec broker kafka-topics --describe --zookeeper zookeeper:2181 | findstr quickstart-jdbc-test
 ```
 
 Output should be
@@ -120,6 +125,7 @@ Topic:quickstart-jdbc-test	PartitionCount:1	ReplicationFactor:1	Configs:
 curl -s -X GET http://localhost:8083/connectors/quickstart-jdbc-source/status
 ```
 
+Output should be
 ```json
 {
   "name": "quickstart-jdbc-source",
@@ -139,6 +145,9 @@ curl -s -X GET http://localhost:8083/connectors/quickstart-jdbc-source/status
 ```
 
 ### 9. Create connector file sink using topic quickstart-jdbc-test
+```
+curl -d @"source-sink.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
+```
 
 ```
 curl -X POST \
@@ -153,21 +162,6 @@ curl -X POST \
     "file": "/tmp/files/jdbc-output.txt"
   }
 }'
-```
-
-```json
-{
-  "name": "quickstart-avro-file-sink",
-  "config": {
-    "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
-    "tasks.max": "1",
-    "topics": "quickstart-jdbc-test",
-    "file": "/tmp/files/jdbc-output.txt",
-    "name": "quickstart-avro-file-sink"
-  },
-  "tasks": [],
-  "type": "sink"
-}
 ```
 
 This will create `./sink/files/jdbc-output.txt`
@@ -200,6 +194,7 @@ curl -s -X GET http://localhost:8083/connectors/quickstart-avro-file-sink/status
 ### 11. Testing update data in source DB then check the sink files and elasticsearch
 
 While listen for changes on sink file, insert new record to table `test` 
+
 ```
 INSERT INTO test (name, email, department) VALUES ('sheldon', 'sheldon@bigbang.com', 'physicist');
 ```
@@ -208,9 +203,3 @@ expected new line in file `./sink/files/jdbc-output.txt`
 ```
 Struct{id=11,name=sheldon,email=sheldon@bigbang.com,department=physicist,modified=Sun Jul 07 16:58:35 UTC 2019}
 ```
-
-#Mongodb
-https://www.w3schools.com/python/python_mongodb_getstarted.asp
-
-#Mongodb connector
-https://www.mongodb.com/docs/kafka-connector/current/quick-start/
