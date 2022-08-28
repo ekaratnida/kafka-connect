@@ -1,0 +1,9 @@
+{
+  "name": "quickstart-avro-file-sink",
+  "config": {
+    "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+    "tasks.max": "1",
+    "topics": "quickstart-jdbc-test",
+    "file": "/tmp/files/jdbc-output.txt"
+  }
+}
