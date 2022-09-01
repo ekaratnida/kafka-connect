@@ -105,7 +105,9 @@ create table test (
      );
 ```
 	
-![sourceJDBCMySQL-sinkFile](https://raw.githubusercontent.com/harryosmar/kafka-connect/master/doc/mysql-db.png)
+Insert data into db
+
+INSERT INTO test (name, email, department) VALUES ('sheldon', 'sheldon@bigbang.com', 'physicist');
 
 ### 7. Create and check if the connector JDBC source - topic has been created
 
