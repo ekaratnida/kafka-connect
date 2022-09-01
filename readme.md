@@ -90,6 +90,10 @@ mysql -uroot -p
 
 enter password confluent
 
+show databases;
+
+use connect_test;
+
 ```
 create table test (
       id int not null auto_increment,
