@@ -2,6 +2,8 @@
 
 https://www.youtube.com/watch?v=brj9DhEOVd0
 
+https://docs.confluent.io/3.3.0/installation/docker/docs/tutorials/connect-avro-jdbc.html
+
 ## How to start
 
 ### 1. Build and start the containers
