@@ -215,9 +215,10 @@ expected new line in file `./sink/files/jdbc-output.txt`
 Struct{id=11,name=sheldon,email=sheldon@bigbang.com,department=physicist,modified=Sun Jul 07 16:58:35 UTC 2019}
 ```
 
-Your turn
-#Mongodb
-https://www.w3schools.com/python/python_mongodb_getstarted.asp
+# Your turn
 
-#Mongodb connector
-https://www.mongodb.com/docs/kafka-connector/current/quick-start/
+### Mongodb
+- https://www.w3schools.com/python/python_mongodb_getstarted.asp
+
+### Mongodb connector
+- https://www.mongodb.com/docs/kafka-connector/current/quick-start/
