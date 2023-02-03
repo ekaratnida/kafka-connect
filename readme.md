@@ -132,8 +132,9 @@ create table test (
 	
 Insert data into db
 
+```sql
 INSERT INTO test (name, email, department) VALUES ('sheldon', 'sheldon@bigbang.com', 'physicist');
-
+```
 
 ### 8. Create and check if the connector JDBC source - topic has been created
 
@@ -180,23 +181,25 @@ Expected output
 ```
 curl -d @"source-sink.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
 ```
-
+Expected output
+```json
+	{
+	"name":"quickstart-avro-file-sink",
+	"config":{"connector.class":"org.apache.kafka.connect.file.FileStreamSinkConnector",
+		"tasks.max":"1",
+		"topics":"quickstart-jdbc-test",
+		"file":"/tmp/files/jdbc-output.txt",
+		"name":"quickstart-avro-file-sink"
+		},
+	"tasks":[],
+	"type":"sink"
+	}
 ```
-curl -X POST \
-  http://localhost:8083/connectors \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "name": "quickstart-avro-file-sink",
-  "config": {
-    "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
-    "tasks.max": "1",
-    "topics": "quickstart-jdbc-test",
-    "file": "/tmp/files/jdbc-output.txt"
-  }
-}'
-```
 
-This will create `./sink/files/jdbc-output.txt`
+This will create `sink/files/jdbc-output.txt` file inside the kafka-connect folder, and the text inside the file is
+```
+Struct{id=1,name=sheldon,email=sheldon@bigbang.com,department=physicist,modified=Fri Feb 03 05:17:30 UTC 2023}
+```
 
 
 ### 11. Check the connector file sink status
@@ -231,9 +234,9 @@ While listen for changes on sink file, insert new record to table `test`
 INSERT INTO test (name, email, department) VALUES ('sheldon2', 'sheldon2@bigbang.com', 'engineer');
 ```
 
-expected new line in file `./sink/files/jdbc-output.txt`
+expected new line in file `sink/files/jdbc-output.txt`
 ```
-Struct{id=11,name=sheldon,email=sheldon@bigbang.com,department=physicist,modified=Sun Jul 07 16:58:35 UTC 2019}
+Struct{id=2,name=sheldon2,email=sheldon2@bigbang.com,department=engineer,modified=Sun Jul 07 16:58:35 UTC 2019}
 ```
 
 # Your turn
