@@ -21,6 +21,14 @@ docker exec broker kafka-topics --create --topic quickstart-avro-offsets --parti
 	&& docker exec broker kafka-topics --create --topic quickstart-avro-status --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181
 ```
 
+Expected output
+
+```
+Created topic quickstart-avro-offsets.
+Created topic quickstart-avro-config.
+Created topic quickstart-avro-status.
+```
+
 ### 3. check the topics has been created
 
 ```
@@ -47,11 +55,19 @@ Topic:quickstart-avro-status	PartitionCount:1	ReplicationFactor:1	Configs:
 ```
 docker logs kafka-connect-avro | findstr started
 ```
+Expected output
+```
+[2023-02-03 04:55:13,758] INFO REST resources initialized; server is started and ready to handle requests (org.apache.kafka.connect.runtime.rest.RestServer)
+```
 
 ### 5. Check list connectors in kafka-connect worker
 
 ```
 curl -s -X GET http://localhost:8083/connector-plugins
+```
+Expected output
+```json
+[{"class":"io.confluent.connect.activemq.ActiveMQSourceConnector","type":"source","version":"5.2.2"},{"class":"io.confluent.connect.elasticsearch.ElasticsearchSinkConnector","type":"sink","version":"5.2.2"},{"class":"io.confluent.connect.gcs.GcsSinkConnector","type":"sink","version":"5.0.1"},{"class":"io.confluent.connect.hdfs.HdfsSinkConnector","type":"sink","version":"5.2.2"},{"class":"io.confluent.connect.hdfs.tools.SchemaSourceConnector","type":"source","version":"2.2.1-cp1"},{"class":"io.confluent.connect.ibm.mq.IbmMQSourceConnector","type":"source","version":"5.2.2"},{"class":"io.confluent.connect.jdbc.JdbcSinkConnector","type":"sink","version":"5.2.2"},{"class":"io.confluent.connect.jdbc.JdbcSourceConnector","type":"source","version":"5.2.2"},{"class":"io.confluent.connect.jms.JmsSourceConnector","type":"source","version":"5.2.2"},{"class":"io.confluent.connect.s3.S3SinkConnector","type":"sink","version":"5.2.2"},{"class":"io.confluent.connect.storage.tools.SchemaSourceConnector","type":"source","version":"2.2.1-cp1"},{"class":"io.debezium.connector.mysql.MySqlConnector","type":"source","version":"0.9.5.Final"},{"class":"org.apache.kafka.connect.file.FileStreamSinkConnector","type":"sink","version":"2.2.1-cp1"},{"class":"org.apache.kafka.connect.file.FileStreamSourceConnector","type":"source","version":"2.2.1-cp1"},{"class":"org.apache.kafka.connect.integration.MonitorableSinkConnector","type":"sink","version":"some great version"},{"class":"org.apache.kafka.connect.integration.MonitorableSourceConnector","type":"source","version":"an entirely different version"},{"class":"org.apache.kafka.connect.runtime.TestSinkConnector","type":"sink","version":"some great version"},{"class":"org.apache.kafka.connect.runtime.TestSourceConnector","type":"source","version":"an entirely different version"},{"class":"org.apache.kafka.connect.runtime.WorkerTest$WorkerTestConnector","type":"unknown","version":"1.0"},{"class":"org.apache.kafka.connect.runtime.rest.resources.ConnectorPluginsResourceTest$ConnectorPluginsResourceTestConnector","type":"unknown","version":"1.0"}]
 ```
 
 ### 6. Create connector JDBC source connector
