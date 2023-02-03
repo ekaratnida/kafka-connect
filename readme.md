@@ -240,9 +240,17 @@ Struct{id=2,name=sheldon2,email=sheldon2@bigbang.com,department=engineer,modifie
 ```
 
 # Your turn
+1. Source (mysql) --> Sink (mongodb)
+2. Source (mysql1) --> Sink (mysql2)
 
 ### Mongodb
 - https://www.w3schools.com/python/python_mongodb_getstarted.asp
 
 ### Mongodb connector
 - https://www.mongodb.com/docs/kafka-connector/current/quick-start/
+
+### Necessary command
+- To delete existing connector
+``` 
+curl -X DELETE http://localhost:8083/connectors/your-connector-name
+```
