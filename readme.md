@@ -72,11 +72,13 @@ Expected output
 
 ### 6. Create connector JDBC source connector
 
+6.1 Send "source.json" file to kafka
+
 ```
 curl -d @"source.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
 ```
 
-output should be
+Expected output
 ```json
 {
   "name": "quickstart-jdbc-source",
@@ -95,7 +97,7 @@ output should be
 }
 ```
 
-The config above will be translated become this sql query below (The sql is just an explaination, no need to run it)
+### Note that the config above will be translated become this sql query below (The sql is just an explaination, no need to run it)
 
 ```sql
 SELECT * 
@@ -105,7 +107,9 @@ WHERE `connect_test`.`test`.`modified` > ?
 ORDER BY `connect_test`.`test`.`modified` ASC
 ```
 
-Create mysql table 'test'
+### 7. Create mysql table 'test'
+
+7.1 Go inside quickstart-mysql container
 
 mysql -uroot -p
 
@@ -130,7 +134,8 @@ Insert data into db
 
 INSERT INTO test (name, email, department) VALUES ('sheldon', 'sheldon@bigbang.com', 'physicist');
 
-### 7. Create and check if the connector JDBC source - topic has been created
+
+### 8. Create and check if the connector JDBC source - topic has been created
 
 ```
 docker exec broker kafka-topics --create --topic quickstart-jdbc-test --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181
@@ -140,19 +145,19 @@ docker exec broker kafka-topics --create --topic quickstart-jdbc-test --partitio
 docker exec broker kafka-topics --describe --zookeeper zookeeper:2181 | findstr quickstart-jdbc-test
 ```
 
-Output should be
+Expected output
 ```
 Topic:quickstart-jdbc-test	PartitionCount:1	ReplicationFactor:1	Configs:
 	Topic: quickstart-jdbc-test	Partition: 0	Leader: 1	Replicas: 1	Isr: 1
 ```
 
-### 8. Check the connector JDBC source status
+### 9. Check the connector JDBC source status
 
 ```
 curl -s -X GET http://localhost:8083/connectors/quickstart-jdbc-source/status
 ```
 
-Output should be
+Expected output
 ```json
 {
   "name": "quickstart-jdbc-source",
@@ -171,7 +176,7 @@ Output should be
 }
 ```
 
-### 9. Create connector file sink using topic quickstart-jdbc-test
+### 10. Create connector file sink using topic quickstart-jdbc-test
 ```
 curl -d @"source-sink.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
 ```
@@ -194,7 +199,7 @@ curl -X POST \
 This will create `./sink/files/jdbc-output.txt`
 
 
-### 10. Check the connector file sink status
+### 11. Check the connector file sink status
 
 ```
 curl -s -X GET http://localhost:8083/connectors/quickstart-avro-file-sink/status
@@ -218,12 +223,12 @@ curl -s -X GET http://localhost:8083/connectors/quickstart-avro-file-sink/status
 }
 ```
 
-### 11. Testing update data in source DB then check the sink files and elasticsearch
+### 12. Testing update data in source DB then check the sink files and elasticsearch
 
 While listen for changes on sink file, insert new record to table `test` 
 
 ```
-INSERT INTO test (name, email, department) VALUES ('sheldon', 'sheldon@bigbang.com', 'physicist');
+INSERT INTO test (name, email, department) VALUES ('sheldon2', 'sheldon2@bigbang.com', 'engineer');
 ```
 
 expected new line in file `./sink/files/jdbc-output.txt`
