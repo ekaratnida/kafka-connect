@@ -255,7 +255,7 @@ Struct{id=2,name=sheldon2,email=sheldon2@bigbang.com,department=engineer,modifie
 curl -X DELETE http://localhost:8083/connectors/your-connector-name
 ```
 
-### Command for exercise mysql1 --> mysql2
+### Necessary commands for exercise mysql1 --> mysql2
 ```
 curl -d @"sink2.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
 
