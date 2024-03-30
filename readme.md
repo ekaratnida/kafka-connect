@@ -263,3 +263,6 @@ curl -X DELETE http://localhost:8083/connectors/quickstart-avro-mysql-sink
 
 curl -s -X GET http://localhost:8083/connectors/quickstart-avro-mysql-sink/status
 ```
+
+### Real-time dataset
+- https://archive.ics.uci.edu/dataset/791/metropt+3+dataset
