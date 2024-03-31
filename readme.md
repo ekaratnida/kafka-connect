@@ -256,6 +256,9 @@ curl -X DELETE http://localhost:8083/connectors/your-connector-name
 ```
 
 ### Necessary commands for exercise mysql1 --> mysql2
+
+Don't forget to change to yr IP address and don't use NIDA network
+
 ```
 curl -d @"sink2.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors
 
